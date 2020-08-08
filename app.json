@@ -1,0 +1,29 @@
+{
+    "name": "Vragen API",
+    "description": "An API to retrieve surveys",
+    "repository": "https://github.com/MartinMetselaar/vragen-api",
+    "keywords": [
+        "vapor",
+        "surveys"
+    ],
+    "env": {
+        "ADMIN_TOKEN": {
+            "description": "A secret token for creating/editing surveys",
+            "generator": "secret"
+        },
+        "CONSUMER_TOKEN": {
+            "description": "A semi secret token for retrieving surveys",
+            "generator": "secret"
+        }
+    },
+    "addons": [
+        {
+            "plan": "heroku-postgresql"
+        }
+    ],
+    "buildpacks": [
+        {
+            "url": "vapor/vapor"
+        }
+    ]
+}
