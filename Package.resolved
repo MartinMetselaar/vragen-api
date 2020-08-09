@@ -200,6 +200,15 @@
         }
       },
       {
+        "package": "vragen-api-models",
+        "repositoryURL": "https://github.com/MartinMetselaar/vragen-api-models.git",
+        "state": {
+          "branch": null,
+          "revision": "154ca435be467f497d55fdc67740617951b6081c",
+          "version": "1.0.0"
+        }
+      },
+      {
         "package": "websocket-kit",
         "repositoryURL": "https://github.com/vapor/websocket-kit.git",
         "state": {

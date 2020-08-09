@@ -5,7 +5,7 @@ struct AnswerController: APIController {
 
     typealias Model = AnswerDatabaseModel
 
-    func all(req: Request) throws -> EventLoopFuture<Page<AnswerDatabaseModel.OutputContent>> {
+    func all(req: Request) throws -> EventLoopFuture<Page<AnswerDatabaseModel.Output>> {
         guard let surveyIdString = req.parameters.get("surveyId"),
             let surveyId = UUID(uuidString: surveyIdString) else {
                 throw Abort(.unprocessableEntity)

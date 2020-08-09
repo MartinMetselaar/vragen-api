@@ -1,5 +1,6 @@
 import Vapor
 import Fluent
+import VragenAPIModels
 
 final class SurveyDatabaseModel: Model {
     static let schema = "survey"
@@ -25,33 +26,5 @@ final class SurveyDatabaseModel: Model {
     ) {
         self.id = id
         self.title = title
-    }
-}
-
-extension SurveyDatabaseModel: APIModel {
-
-    struct InputContent: Content {
-        let title: String
-    }
-
-    struct OutputContent: Content, Equatable {
-        let id: String
-        let title: String
-    }
-
-    typealias Input = InputContent
-    typealias Output = OutputContent
-
-    var output: OutputContent {
-        OutputContent(id: id?.uuidString ?? "unknown", title: title)
-    }
-
-    convenience init(input: InputContent) throws {
-        self.init()
-        self.title = input.title
-    }
-
-    func update(input: InputContent) throws {
-        title = input.title
     }
 }

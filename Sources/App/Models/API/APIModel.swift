@@ -2,8 +2,8 @@ import Vapor
 import Fluent
 
 protocol APIModel: Model {
-    associatedtype Input: Content
-    associatedtype Output: Content
+    associatedtype Input: Codable
+    associatedtype Output: (Codable & Content)
 
     var output: Output { get }
 

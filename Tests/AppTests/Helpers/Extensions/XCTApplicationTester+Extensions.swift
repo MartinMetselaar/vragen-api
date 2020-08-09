@@ -8,9 +8,9 @@ extension XCTApplicationTester {
         headers: HTTPHeaders = [:],
         content: T,
         afterResponse: (XCTHTTPResponse) throws -> () = { _ in }
-    ) throws -> XCTApplicationTester where T: Content {
+    ) throws -> XCTApplicationTester where T: Codable {
         try test(method, path, headers: headers, beforeRequest: { req in
-            try req.content.encode(content)
+            try req.content.encode(content, as: .json)
         }, afterResponse: afterResponse)
     }
 }

@@ -33,31 +33,3 @@ final class AnswerDatabaseModel: Model {
         self.$question.id = questionId
     }
 }
-
-extension AnswerDatabaseModel: APIModel {
-
-    struct InputContent: Content {
-        let title: String
-    }
-
-    struct OutputContent: Content, Equatable {
-        let id: String
-        let title: String
-    }
-
-    typealias Input = InputContent
-    typealias Output = OutputContent
-
-    var output: OutputContent {
-        OutputContent(id: id?.uuidString ?? "unknown", title: title)
-    }
-
-    convenience init(input: InputContent) throws {
-        self.init()
-        self.title = input.title
-    }
-
-    func update(input: InputContent) throws {
-        title = input.title
-    }
-}
