@@ -18,6 +18,19 @@ struct QuestionController: APIController {
             }
     }
 
+    func create(req: Request) throws -> EventLoopFuture<QuestionDatabaseModel.Output> {
+        guard let surveyIdString = req.parameters.get("surveyId"),
+            let surveyId = UUID(uuidString: surveyIdString) else {
+                throw Abort(.unprocessableEntity)
+        }
+
+        let input = try req.content.decode(QuestionDatabaseModel.Input.self)
+        let model = try QuestionDatabaseModel(input: input)
+        model.surveyId = surveyId
+        return model.save(on: req.db)
+            .map { model.output }
+    }
+
     func find(req: Request) throws -> EventLoopFuture<QuestionDatabaseModel> {
         guard let surveyIdString = req.parameters.get("surveyId"),
             let surveyId = UUID(uuidString: surveyIdString) else {

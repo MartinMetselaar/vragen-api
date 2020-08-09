@@ -1,6 +1,8 @@
 @testable import App
 import Vapor
+import Fluent
 import XCTVapor
+import VragenAPIModels
 
 final class QuestionControllerIntegrationTests: XCTestCase {
 
@@ -63,6 +65,71 @@ final class QuestionControllerIntegrationTests: XCTestCase {
 
         // When
         try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/\(questionId)", headers: headers) { res in
+            // Then
+            XCTAssertEqual(res.status, .unauthorized)
+        }
+    }
+
+    // MARK: - All
+
+    func test_all_whenCorrectToken_shouldReturnModels() throws {
+        // Given
+        let headers = HTTPHeaders.createAdminToken()
+        let survey = createSurveyModel(title: "survey")
+        let question = createQuestionModel(title: "question", surveyId: survey.id)
+
+        let surveyId = survey.id?.uuidString ?? ""
+
+        // When
+        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/", headers: headers) { res in
+            // Then
+            let result = try res.content.decode(Page<QuestionDatabaseModel.Output>.self)
+            XCTAssertEqual(result.items, [question.output])
+        }
+    }
+
+    func test_all_whenConsumerToken_shouldReturnUnauthorized() throws {
+        // Given
+        let headers = HTTPHeaders.createConsumerToken()
+        let survey = createSurveyModel(title: "survey")
+        let _ = createQuestionModel(title: "question", surveyId: survey.id)
+
+        let surveyId = survey.id?.uuidString ?? ""
+
+        // When
+        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/", headers: headers) { res in
+            // Then
+            XCTAssertEqual(res.status, .unauthorized)
+        }
+    }
+
+    // MARK: - Create
+
+    func test_create_whenCorrectToken_shouldReturnModel() throws {
+        // Given
+        let headers = HTTPHeaders.createAdminToken()
+        let survey = createSurveyModel(title: "survey")
+        let input = QuestionCreateRequest(title: "question")
+
+        let surveyId = survey.id?.uuidString ?? ""
+
+        // When
+        try app.test(.POST, "api/v1/surveys/\(surveyId)/questions/", headers: headers, content: input) { res in
+            // Then
+            let result = try res.content.decode(SurveyDatabaseModel.Output.self)
+            XCTAssertEqual(result.title, "question")
+        }
+    }
+
+    func test_create_whenUnauthorizedToken_shouldReturnUnauthorized() throws {
+        let headers = HTTPHeaders.createConsumerToken()
+        let survey = createSurveyModel(title: "survey")
+        let input = QuestionCreateRequest(title: "question")
+
+        let surveyId = survey.id?.uuidString ?? ""
+
+        // When
+        try app.test(.POST, "api/v1/surveys/\(surveyId)/questions/", headers: headers, content: input) { res in
             // Then
             XCTAssertEqual(res.status, .unauthorized)
         }
