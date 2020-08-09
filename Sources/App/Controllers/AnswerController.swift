@@ -6,14 +6,12 @@ struct AnswerController: APIController {
     typealias Model = AnswerDatabaseModel
 
     func all(req: Request) throws -> EventLoopFuture<Page<AnswerDatabaseModel.Output>> {
-        guard let surveyIdString = req.parameters.get("surveyId"),
-            let surveyId = UUID(uuidString: surveyIdString) else {
-                throw Abort(.unprocessableEntity)
+        guard let surveyId = req.parameters.get("surveyId", as: UUID.self) else {
+            throw Abort(.unprocessableEntity)
         }
 
-        guard let questionIdString = req.parameters.get("questionId"),
-            let questionId = UUID(uuidString: questionIdString) else {
-                throw Abort(.unprocessableEntity)
+        guard let questionId = req.parameters.get("questionId", as: UUID.self) else {
+            throw Abort(.unprocessableEntity)
         }
 
         return AnswerDatabaseModel.query(on: req.db)
@@ -27,14 +25,12 @@ struct AnswerController: APIController {
     }
 
     func create(req: Request) throws -> EventLoopFuture<AnswerDatabaseModel.Output> {
-        guard let surveyIdString = req.parameters.get("surveyId"),
-            let surveyId = UUID(uuidString: surveyIdString) else {
-                throw Abort(.unprocessableEntity)
+        guard let surveyId = req.parameters.get("surveyId", as: UUID.self) else {
+            throw Abort(.unprocessableEntity)
         }
 
-        guard let questionIdString = req.parameters.get("questionId"),
-            let questionId = UUID(uuidString: questionIdString) else {
-                throw Abort(.unprocessableEntity)
+        guard let questionId = req.parameters.get("questionId", as: UUID.self) else {
+            throw Abort(.unprocessableEntity)
         }
 
         let input = try req.content.decode(AnswerDatabaseModel.Input.self)
@@ -54,19 +50,16 @@ struct AnswerController: APIController {
     }
 
     func find(req: Request) throws -> EventLoopFuture<AnswerDatabaseModel> {
-        guard let surveyIdString = req.parameters.get("surveyId"),
-            let surveyId = UUID(uuidString: surveyIdString) else {
-                throw Abort(.unprocessableEntity)
+        guard let surveyId = req.parameters.get("surveyId", as: UUID.self) else {
+            throw Abort(.unprocessableEntity)
         }
 
-        guard let questionIdString = req.parameters.get("questionId"),
-            let questionId = UUID(uuidString: questionIdString) else {
-                throw Abort(.unprocessableEntity)
+        guard let questionId = req.parameters.get("questionId", as: UUID.self) else {
+            throw Abort(.unprocessableEntity)
         }
 
-        guard let answerIdString = req.parameters.get("answerId"),
-            let answerId = UUID(uuidString: answerIdString) else {
-                throw Abort(.unprocessableEntity)
+        guard let answerId = req.parameters.get("answerId", as: UUID.self) else {
+            throw Abort(.unprocessableEntity)
         }
 
         return AnswerDatabaseModel.query(on: req.db)

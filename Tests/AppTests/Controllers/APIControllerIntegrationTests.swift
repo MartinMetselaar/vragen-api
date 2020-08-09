@@ -277,10 +277,9 @@ final class APIControllerIntegrationTests: XCTestCase {
         typealias Model = DatabaseModel
 
         func find(req: Request) throws -> EventLoopFuture<DatabaseModel> {
-            guard
-                let idString = req.parameters.get("modelId"),
-                let id = UUID(idString)
-                else { throw Abort(.unprocessableEntity) }
+            guard let id = req.parameters.get("modelId", as: UUID.self) else {
+                throw Abort(.unprocessableEntity)
+            }
 
             return DatabaseModel.find(id, on: req.db)
                 .unwrap(or: Abort(.notFound))
