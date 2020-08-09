@@ -17,10 +17,6 @@ protocol APIController {
 
 extension APIController {
     func all(req: Request) throws -> EventLoopFuture<Page<Model.Output>> {
-        guard req.auth.has(AuthorizedUser.self) else {
-            throw Abort(.unauthorized)
-        }
-
         return Model.query(on: req.db)
             .paginate(for: req)
             .map { test in
@@ -29,19 +25,11 @@ extension APIController {
     }
 
     func get(req: Request) throws -> EventLoopFuture<Model.Output> {
-        guard req.auth.has(AuthorizedUser.self) else {
-            throw Abort(.unauthorized)
-        }
-
         return try find(req: req)
         .map { $0.output }
     }
 
     func create(req: Request) throws -> EventLoopFuture<Model.Output> {
-        guard req.auth.has(AuthorizedUser.self) else {
-            throw Abort(.unauthorized)
-        }
-
         let input = try req.content.decode(Model.Input.self)
         let model = try Model(input: input)
         return model.save(on: req.db)
@@ -49,10 +37,6 @@ extension APIController {
     }
 
     func update(req: Request) throws -> EventLoopFuture<Model.Output> {
-        guard req.auth.has(AuthorizedUser.self) else {
-            throw Abort(.unauthorized)
-        }
-
         let input = try req.content.decode(Model.Input.self)
 
         return try find(req: req)
@@ -66,10 +50,6 @@ extension APIController {
     }
 
     func delete(req: Request) throws -> EventLoopFuture<HTTPStatus> {
-        guard req.auth.has(AuthorizedUser.self) else {
-            throw Abort(.unauthorized)
-        }
-        
         return try find(req: req)
             .flatMap { $0.delete(on: req.db) }
             .map { .ok }
@@ -80,24 +60,29 @@ extension APIController {
 
         // All
         routes.grouped(AdminAuthenticator())
+            .grouped(AuthorizedUser.guardMiddleware())
             .get(use: self.all)
 
         // Create
         routes.grouped(AdminAuthenticator())
+            .grouped(AuthorizedUser.guardMiddleware())
             .post(use: self.create)
 
         // Get
         routes.grouped(ConsumerAuthenticator()).grouped(AdminAuthenticator())
+            .grouped(AuthorizedUser.guardMiddleware())
             .get(idPathComponent, use: self.get)
 
         // Update
         routes
             .grouped(AdminAuthenticator())
+            .grouped(AuthorizedUser.guardMiddleware())
             .post(idPathComponent, use: self.update)
 
         // Delete
         routes
             .grouped(AdminAuthenticator())
+            .grouped(AuthorizedUser.guardMiddleware())
             .delete(idPathComponent, use: self.delete)
     }
 }
