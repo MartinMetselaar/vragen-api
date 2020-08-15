@@ -10,6 +10,10 @@ extension QuestionDatabaseModel: APIModel {
         QuestionResponse(id: id?.uuidString ?? "unknown", title: title)
     }
 
+    var outputWithAnswers: QuestionWithAnswersResponse {
+        QuestionWithAnswersResponse(id: id?.uuidString ?? "unknown", title: title, answers: answers.outputs)
+    }
+
     convenience init(input: Input) throws {
         self.init()
         self.title = input.title
@@ -21,3 +25,8 @@ extension QuestionDatabaseModel: APIModel {
 }
 
 extension QuestionResponse: Content {}
+extension QuestionWithAnswersResponse: Content {}
+
+extension Array where Element == QuestionDatabaseModel {
+    var outputsWithAnswers: [QuestionWithAnswersResponse] { map { $0.outputWithAnswers } }
+}

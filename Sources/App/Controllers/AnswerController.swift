@@ -43,7 +43,7 @@ struct AnswerController: APIController {
             .first()
             .unwrap(or: Abort(.notFound))
             .flatMap { _ in
-                model.save(on: req.db).map {
+                model.create(on: req.db).map {
                     model.output
                 }
             }

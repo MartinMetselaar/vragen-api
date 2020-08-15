@@ -21,3 +21,7 @@ extension AnswerDatabaseModel: APIModel {
 }
 
 extension AnswerResponse: Content {}
+
+extension Array where Element == AnswerDatabaseModel {
+    var outputs: [Element.Output] { map { $0.output } }
+}

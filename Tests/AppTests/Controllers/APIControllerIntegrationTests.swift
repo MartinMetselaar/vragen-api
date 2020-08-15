@@ -68,24 +68,9 @@ final class APIControllerIntegrationTests: XCTestCase {
         }
     }
 
-    func test_get_whenConsumerToken_shouldReturnModel() throws {
+    func test_get_whenConsumerToken_shouldReturnUnauthorized() throws {
         // Given
         let headers = HTTPHeaders.createConsumerToken()
-        let model = createDatabaseModel(title: "title")
-
-        let identifier = model.id?.uuidString ?? ""
-
-        // When
-        try app.test(.GET, "/\(identifier)", headers: headers) { res in
-            // Then
-            let result = try res.content.decode(DatabaseModel.Output.self)
-            XCTAssertEqual(result, model.output)
-        }
-    }
-
-    func test_get_whenUnauthorizedToken_shouldReturnUnauthorized() throws {
-        // Given
-        let headers = HTTPHeaders.createUnknownToken()
         let model = createDatabaseModel(title: "title")
 
         let identifier = model.id?.uuidString ?? ""

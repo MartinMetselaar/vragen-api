@@ -26,7 +26,7 @@ struct QuestionController: APIController {
         let input = try req.content.decode(QuestionDatabaseModel.Input.self)
         let model = try QuestionDatabaseModel(input: input)
         model.surveyId = surveyId
-        return model.save(on: req.db)
+        return model.create(on: req.db)
             .map { model.output }
     }
 

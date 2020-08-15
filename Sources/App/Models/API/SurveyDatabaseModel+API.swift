@@ -10,6 +10,10 @@ extension SurveyDatabaseModel: APIModel {
         SurveyResponse(id: id?.uuidString ?? "unknown", title: title)
     }
 
+    var outputWithQuestions: SurveyWithQuestionsResponse {
+        SurveyWithQuestionsResponse(id: id?.uuidString ?? "unknown", title: title, questions: questions.outputsWithAnswers)
+    }
+
     convenience init(input: Input) throws {
         self.init()
         self.title = input.title
@@ -21,3 +25,4 @@ extension SurveyDatabaseModel: APIModel {
 }
 
 extension SurveyResponse: Content {}
+extension SurveyWithQuestionsResponse: Content {}

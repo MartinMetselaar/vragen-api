@@ -19,9 +19,7 @@ extension APIController {
     func all(req: Request) throws -> EventLoopFuture<Page<Model.Output>> {
         return Model.query(on: req.db)
             .paginate(for: req)
-            .map { test in
-                test.map { $0.output }
-            }
+            .map { $0.map { $0.output } }
     }
 
     func get(req: Request) throws -> EventLoopFuture<Model.Output> {
@@ -32,7 +30,7 @@ extension APIController {
     func create(req: Request) throws -> EventLoopFuture<Model.Output> {
         let input = try req.content.decode(Model.Input.self)
         let model = try Model(input: input)
-        return model.save(on: req.db)
+        return model.create(on: req.db)
             .map { model.output }
     }
 
@@ -69,7 +67,7 @@ extension APIController {
             .post(use: self.create)
 
         // Get
-        routes.grouped(ConsumerAuthenticator()).grouped(AdminAuthenticator())
+        routes.grouped(AdminAuthenticator())
             .grouped(AuthorizedUser.guardMiddleware())
             .get(idPathComponent, use: self.get)
 
