@@ -72,7 +72,7 @@ final class AnswerControllerIntegrationTests: XCTestCase {
         // When
         try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/\(questionId)/answers/", headers: headers) { res in
             // Then
-            let result = try res.content.decode(Page<AnswerDatabaseModel.Output>.self)
+            let result = try res.content.decode(VragenAPIModels.Page<AnswerDatabaseModel.Output>.self)
             XCTAssertEqual(result.items, [answer.output])
         }
     }

@@ -66,7 +66,7 @@ final class QuestionControllerIntegrationTests: XCTestCase {
         // When
         try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/", headers: headers) { res in
             // Then
-            let result = try res.content.decode(Page<QuestionDatabaseModel.Output>.self)
+            let result = try res.content.decode(VragenAPIModels.Page<QuestionDatabaseModel.Output>.self)
             XCTAssertEqual(result.items, [question.output])
         }
     }

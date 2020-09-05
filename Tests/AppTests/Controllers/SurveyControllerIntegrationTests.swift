@@ -82,7 +82,7 @@ final class SurveyControllerIntegrationTests: XCTestCase {
         // When
         try app.test(.GET, "api/v1/surveys/", headers: headers) { res in
             // Then
-            let result = try res.content.decode(Page<SurveyDatabaseModel.Output>.self)
+            let result = try res.content.decode(VragenAPIModels.Page<SurveyDatabaseModel.Output>.self)
             XCTAssertNotNil(result.items.first)
             XCTAssertEqual(result.items.first?.id, survey.id?.uuidString)
             XCTAssertEqual(result.items.first?.title, survey.title)
