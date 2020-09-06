@@ -165,7 +165,7 @@ final class AnswerControllerIntegrationTests: XCTestCase {
     }
 
     func createAnswerModel(title: String, questionId: UUID?) -> AnswerDatabaseModel {
-        guard let questionId = questionId else { fatalError("QuestionId should actually not be optional") }
+        guard let questionId = questionId else { fatalError("AnswerId should actually not be optional") }
 
         let model = AnswerDatabaseModel(title: title, questionId: questionId)
         try? model.save(on: app.db).wait()

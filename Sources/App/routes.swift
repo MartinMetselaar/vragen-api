@@ -15,4 +15,8 @@ func routes(_ app: Application) throws {
     let answers = questions.grouped(":questionId", "answers")
     let answerController = AnswerController()
     answerController.routes(routes: answers, id: "answerId")
+
+    let submitAnswerController = SubmitAnswerController()
+    let submit = v1.grouped("submit")
+    submitAnswerController.routes(routes: submit)
 }
