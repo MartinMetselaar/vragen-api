@@ -13,8 +13,8 @@ struct QuestionController: APIController {
         return QuestionDatabaseModel.query(on: req.db)
             .filter(\.$surveyId == surveyId)
             .paginate(for: req)
-            .map {
-                $0.map { $0.output }
+            .map { page in
+                .init(items: page.items.compactMap { $0.output }, metadata: page.metadata)
             }
     }
 
@@ -28,6 +28,7 @@ struct QuestionController: APIController {
         model.surveyId = surveyId
         return model.create(on: req.db)
             .map { model.output }
+            .unwrap(or: Abort(.internalServerError))
     }
 
     func find(req: Request) throws -> EventLoopFuture<QuestionDatabaseModel> {

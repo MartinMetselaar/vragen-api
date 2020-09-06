@@ -19,8 +19,8 @@ struct AnswerController: APIController {
             .join(QuestionDatabaseModel.self, on: \AnswerDatabaseModel.$questionId == \QuestionDatabaseModel.$id)
             .filter(QuestionDatabaseModel.self, \.$surveyId == surveyId)
             .paginate(for: req)
-            .map {
-                $0.map { $0.output }
+            .map { page in
+                .init(items: page.items.compactMap { $0.output }, metadata: page.metadata)
             }
     }
 
@@ -47,6 +47,7 @@ struct AnswerController: APIController {
                     model.output
                 }
             }
+            .unwrap(or: Abort(.internalServerError))
     }
 
     func find(req: Request) throws -> EventLoopFuture<AnswerDatabaseModel> {

@@ -20,6 +20,7 @@ struct SurveyController: APIController {
             .first()
             .unwrap(or: Abort(.notFound))
             .map { $0.outputWithQuestions }
+            .unwrap(or: Abort(.internalServerError))
     }
 
     func find(req: Request) throws -> EventLoopFuture<SurveyDatabaseModel> {

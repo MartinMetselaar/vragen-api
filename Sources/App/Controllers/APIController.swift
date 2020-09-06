@@ -19,12 +19,15 @@ extension APIController {
     func all(req: Request) throws -> EventLoopFuture<Page<Model.Output>> {
         return Model.query(on: req.db)
             .paginate(for: req)
-            .map { $0.map { $0.output } }
+            .map { page in
+                .init(items: page.items.compactMap { $0.output }, metadata: page.metadata)
+            }
     }
 
     func get(req: Request) throws -> EventLoopFuture<Model.Output> {
         return try find(req: req)
-        .map { $0.output }
+            .map { $0.output }
+            .unwrap(or: Abort(.internalServerError))
     }
 
     func create(req: Request) throws -> EventLoopFuture<Model.Output> {
@@ -32,6 +35,7 @@ extension APIController {
         let model = try Model(input: input)
         return model.create(on: req.db)
             .map { model.output }
+            .unwrap(or: Abort(.internalServerError))
     }
 
     func update(req: Request) throws -> EventLoopFuture<Model.Output> {
@@ -43,8 +47,10 @@ extension APIController {
                 return model
             }
             .flatMap { model in
-                return model.update(on: req.db).map { model.output }
+                return model.update(on: req.db)
+                    .map { model.output }
             }
+            .unwrap(or: Abort(.internalServerError))
     }
 
     func delete(req: Request) throws -> EventLoopFuture<HTTPStatus> {

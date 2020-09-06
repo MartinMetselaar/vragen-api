@@ -6,12 +6,14 @@ extension SurveyDatabaseModel: APIModel {
     typealias Input = SurveyCreateRequest
     typealias Output = SurveyResponse
 
-    var output: Output {
-        SurveyResponse(id: id?.uuidString ?? "unknown", title: title)
+    var output: Output? {
+        guard let id = id else { return nil }
+        return SurveyResponse(id: id, title: title)
     }
 
-    var outputWithQuestions: SurveyWithQuestionsResponse {
-        SurveyWithQuestionsResponse(id: id?.uuidString ?? "unknown", title: title, questions: questions.outputsWithAnswers)
+    var outputWithQuestions: SurveyWithQuestionsResponse? {
+        guard let id = id else { return nil }
+        return SurveyWithQuestionsResponse(id: id, title: title, questions: questions.outputsWithAnswers)
     }
 
     convenience init(input: Input) throws {

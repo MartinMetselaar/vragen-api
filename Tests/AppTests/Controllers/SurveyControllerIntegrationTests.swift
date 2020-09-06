@@ -65,7 +65,7 @@ final class SurveyControllerIntegrationTests: XCTestCase {
             // Then
             let result = try res.content.decode(SurveyWithQuestionsResponse.self)
             XCTAssertNotNil(result)
-            XCTAssertEqual(result.id, model.id?.uuidString)
+            XCTAssertEqual(result.id, model.id)
             XCTAssertEqual(result.title, model.title)
 
             XCTAssertEqual(result.questions.count, 2)
@@ -84,7 +84,7 @@ final class SurveyControllerIntegrationTests: XCTestCase {
             // Then
             let result = try res.content.decode(VragenAPIModels.Page<SurveyDatabaseModel.Output>.self)
             XCTAssertNotNil(result.items.first)
-            XCTAssertEqual(result.items.first?.id, survey.id?.uuidString)
+            XCTAssertEqual(result.items.first?.id, survey.id)
             XCTAssertEqual(result.items.first?.title, survey.title)
         }
     }

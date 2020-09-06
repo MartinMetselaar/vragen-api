@@ -6,12 +6,14 @@ extension QuestionDatabaseModel: APIModel {
     typealias Input = QuestionCreateRequest
     typealias Output = QuestionResponse
 
-    var output: Output {
-        QuestionResponse(id: id?.uuidString ?? "unknown", title: title)
+    var output: Output? {
+        guard let id = id else { return nil }
+        return QuestionResponse(id: id, title: title)
     }
 
-    var outputWithAnswers: QuestionWithAnswersResponse {
-        QuestionWithAnswersResponse(id: id?.uuidString ?? "unknown", title: title, answers: answers.outputs)
+    var outputWithAnswers: QuestionWithAnswersResponse? {
+        guard let id = id else { return nil }
+        return QuestionWithAnswersResponse(id: id, title: title, answers: answers.outputs)
     }
 
     convenience init(input: Input) throws {
@@ -28,5 +30,5 @@ extension QuestionResponse: Content {}
 extension QuestionWithAnswersResponse: Content {}
 
 extension Array where Element == QuestionDatabaseModel {
-    var outputsWithAnswers: [QuestionWithAnswersResponse] { map { $0.outputWithAnswers } }
+    var outputsWithAnswers: [QuestionWithAnswersResponse] { compactMap { $0.outputWithAnswers } }
 }

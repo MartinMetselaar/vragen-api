@@ -17,7 +17,7 @@ let package = Package(
         .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.1.0"),
         .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.0"),
 
-        .package(url: "https://github.com/MartinMetselaar/vragen-api-models.git", from: "1.2.0"),
+        .package(url: "https://github.com/MartinMetselaar/vragen-api-models.git", from: "1.3.0"),
     ],
     targets: [
         .target(name: "App", dependencies: [

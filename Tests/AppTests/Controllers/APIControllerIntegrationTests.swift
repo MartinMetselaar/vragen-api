@@ -216,15 +216,16 @@ final class APIControllerIntegrationTests: XCTestCase {
         }
 
         struct OutputContent: Content, Equatable {
-            let id: String
+            let id: UUID
             let title: String
         }
 
         typealias Input = InputContent
         typealias Output = OutputContent
 
-        var output: OutputContent {
-            OutputContent(id: id?.uuidString ?? "unknown", title: title)
+        var output: OutputContent? {
+            guard let id = id else { return nil }
+            return OutputContent(id: id, title: title)
         }
 
         convenience init(input: InputContent) throws {
