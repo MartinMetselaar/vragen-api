@@ -7,16 +7,16 @@ struct CreateDatabaseMigration: Migration {
             database.schema(SurveyDatabaseModel.schema)
                 .id()
                 .field(SurveyDatabaseModel.FieldKeys.title, .string, .required)
-                .field(SurveyDatabaseModel.FieldKeys.createdAt, .date, .required)
-                .field(SurveyDatabaseModel.FieldKeys.updatedAt, .date, .required)
+                .field(SurveyDatabaseModel.FieldKeys.createdAt, .datetime, .required)
+                .field(SurveyDatabaseModel.FieldKeys.updatedAt, .datetime, .required)
                 .create(),
 
             database.schema(QuestionDatabaseModel.schema)
                 .id()
                 .field(QuestionDatabaseModel.FieldKeys.title, .string, .required)
                 .field(QuestionDatabaseModel.FieldKeys.surveyId, .uuid, .required)
-                .field(QuestionDatabaseModel.FieldKeys.createdAt, .date, .required)
-                .field(QuestionDatabaseModel.FieldKeys.updatedAt, .date, .required)
+                .field(QuestionDatabaseModel.FieldKeys.createdAt, .datetime, .required)
+                .field(QuestionDatabaseModel.FieldKeys.updatedAt, .datetime, .required)
                 .foreignKey(QuestionDatabaseModel.FieldKeys.surveyId, references: SurveyDatabaseModel.schema, .id, onDelete: .cascade)
                 .create(),
 
@@ -24,8 +24,8 @@ struct CreateDatabaseMigration: Migration {
                 .id()
                 .field(AnswerDatabaseModel.FieldKeys.title, .string, .required)
                 .field(AnswerDatabaseModel.FieldKeys.questionId, .uuid, .required)
-                .field(AnswerDatabaseModel.FieldKeys.createdAt, .date, .required)
-                .field(AnswerDatabaseModel.FieldKeys.updatedAt, .date, .required)
+                .field(AnswerDatabaseModel.FieldKeys.createdAt, .datetime, .required)
+                .field(AnswerDatabaseModel.FieldKeys.updatedAt, .datetime, .required)
                 .foreignKey(AnswerDatabaseModel.FieldKeys.questionId, references: QuestionDatabaseModel.schema, .id, onDelete: .cascade)
                 .create(),
         ])
