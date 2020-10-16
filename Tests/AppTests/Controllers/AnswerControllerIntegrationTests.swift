@@ -32,11 +32,11 @@ final class AnswerControllerIntegrationTests: XCTestCase {
         let answerId = answer.id?.uuidString ?? ""
 
         // When
-        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/\(questionId)/answers/\(answerId)", headers: headers) { res in
+        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/\(questionId)/answers/\(answerId)", headers: headers, afterResponse: { res in
             // Then
             let result = try res.content.decode(AnswerDatabaseModel.Output.self)
             XCTAssertEqual(result, answer.output)
-        }
+        })
     }
 
     func test_get_whenConsumerToken_shouldReturnUnauthorized() throws {
@@ -51,10 +51,10 @@ final class AnswerControllerIntegrationTests: XCTestCase {
         let answerId = answer.id?.uuidString ?? ""
 
         // When
-        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/\(questionId)/answers/\(answerId)", headers: headers) { res in
+        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/\(questionId)/answers/\(answerId)", headers: headers, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .unauthorized)
-        }
+        })
     }
 
     // MARK: - All
@@ -70,11 +70,11 @@ final class AnswerControllerIntegrationTests: XCTestCase {
         let questionId = question.id?.uuidString ?? ""
 
         // When
-        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/\(questionId)/answers/", headers: headers) { res in
+        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/\(questionId)/answers/", headers: headers, afterResponse: { res in
             // Then
             let result = try res.content.decode(VragenAPIModels.Page<AnswerDatabaseModel.Output>.self)
             XCTAssertEqual(result.items, [answer.output])
-        }
+        })
     }
 
     func test_all_whenConsumerToken_shouldReturnUnauthorized() throws {
@@ -87,10 +87,10 @@ final class AnswerControllerIntegrationTests: XCTestCase {
         let questionId = question.id?.uuidString ?? ""
 
         // When
-        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/\(questionId)/answers/", headers: headers) { res in
+        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/\(questionId)/answers/", headers: headers, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .unauthorized)
-        }
+        })
     }
 
     // MARK: - Create
@@ -106,11 +106,11 @@ final class AnswerControllerIntegrationTests: XCTestCase {
         let questionId = question.id?.uuidString ?? ""
 
         // When
-        try app.test(.POST, "api/v1/surveys/\(surveyId)/questions/\(questionId)/answers/", headers: headers, content: input) { res in
+        try app.test(.POST, "api/v1/surveys/\(surveyId)/questions/\(questionId)/answers/", headers: headers, content: input, afterResponse: { res in
             // Then
             let result = try res.content.decode(AnswerDatabaseModel.Output.self)
             XCTAssertEqual(result.title, "answer")
-        }
+        })
     }
 
     func test_create_whenUnauthorizedToken_shouldReturnUnauthorized() throws {
@@ -123,10 +123,10 @@ final class AnswerControllerIntegrationTests: XCTestCase {
         let questionId = question.id?.uuidString ?? ""
 
         // When
-        try app.test(.POST, "api/v1/surveys/\(surveyId)/questions/\(questionId)/answers/", headers: headers, content: input) { res in
+        try app.test(.POST, "api/v1/surveys/\(surveyId)/questions/\(questionId)/answers/", headers: headers, content: input, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .unauthorized)
-        }
+        })
     }
 
     func test_create_whenQuestionIsFromDifferentSurvey_shouldReturnNotFound() throws {
@@ -140,10 +140,10 @@ final class AnswerControllerIntegrationTests: XCTestCase {
         let questionId = question.id?.uuidString ?? ""
 
         // When
-        try app.test(.POST, "api/v1/surveys/\(surveyId)/questions/\(questionId)/answers/", headers: headers, content: input) { res in
+        try app.test(.POST, "api/v1/surveys/\(surveyId)/questions/\(questionId)/answers/", headers: headers, content: input, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .notFound)
-        }
+        })
     }
 
     // MARK: - Helpers

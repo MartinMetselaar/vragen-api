@@ -30,14 +30,14 @@ final class SubmitAnswerControllerIntegrationTests: XCTestCase {
         let input = SubmitAnswerRequest(userId: "123", surveyId: survey.id!, questionId: question.id!, answerId: answer.id!)
 
         // When
-        try app.test(.POST, "api/v1/submit/", headers: headers, content: input) { res in
+        try app.test(.POST, "api/v1/submit/", headers: headers, content: input, afterResponse: { res in
             // Then
             let result = try res.content.decode(SubmittedAnswerDatabaseModel.Output.self)
             XCTAssertEqual(result.userId, "123")
             XCTAssertEqual(result.answerId, answer.id)
             XCTAssertEqual(result.questionId, question.id)
             XCTAssertEqual(result.surveyId, survey.id)
-        }
+        })
     }
 
     func test_submit_whenAdminToken_shouldReturnUnauthorized() throws {
@@ -45,10 +45,10 @@ final class SubmitAnswerControllerIntegrationTests: XCTestCase {
         let headers = HTTPHeaders.createAdminToken()
 
         // When
-        try app.test(.POST, "api/v1/submit/", headers: headers) { res in
+        try app.test(.POST, "api/v1/submit/", headers: headers, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .unauthorized)
-        }
+        })
 
         // Then
         let _ = SubmittedAnswerDatabaseModel.query(on: app.db)
@@ -70,27 +70,27 @@ final class SubmitAnswerControllerIntegrationTests: XCTestCase {
         let input = SubmitAnswerRequest(userId: userId, surveyId: survey.id!, questionId: question.id!, answerId: answer1.id!)
 
         // When
-        try app.test(.POST, "api/v1/submit/", headers: headers, content: input) { res in
+        try app.test(.POST, "api/v1/submit/", headers: headers, content: input, afterResponse: { res in
             // Then
             let result = try res.content.decode(SubmittedAnswerDatabaseModel.Output.self)
             XCTAssertEqual(result.userId, userId)
             XCTAssertEqual(result.answerId, answer1.id)
             XCTAssertEqual(result.questionId, question.id)
             XCTAssertEqual(result.surveyId, survey.id)
-        }
+        })
 
         // Given
         let changedInput = SubmitAnswerRequest(userId: userId, surveyId: survey.id!, questionId: question.id!, answerId: answer2.id!)
 
         // When
-        try app.test(.POST, "api/v1/submit/", headers: headers, content: changedInput) { res in
+        try app.test(.POST, "api/v1/submit/", headers: headers, content: changedInput, afterResponse: { res in
             // Then
             let result = try res.content.decode(SubmittedAnswerDatabaseModel.Output.self)
             XCTAssertEqual(result.userId, userId)
             XCTAssertEqual(result.answerId, answer2.id)
             XCTAssertEqual(result.questionId, question.id)
             XCTAssertEqual(result.surveyId, survey.id)
-        }
+        })
 
         // Then
         let _ = SubmittedAnswerDatabaseModel.query(on: app.db)
@@ -111,10 +111,10 @@ final class SubmitAnswerControllerIntegrationTests: XCTestCase {
         let input = SubmitAnswerRequest(userId: "123", surveyId: survey.id!, questionId: question1.id!, answerId: answer2.id!)
 
         // When
-        try app.test(.POST, "api/v1/submit/", headers: headers, content: input) { res in
+        try app.test(.POST, "api/v1/submit/", headers: headers, content: input, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .notFound)
-        }
+        })
 
         // Then
         let _ = SubmittedAnswerDatabaseModel.query(on: app.db)
@@ -138,27 +138,27 @@ final class SubmitAnswerControllerIntegrationTests: XCTestCase {
         let firstInput = SubmitAnswerRequest(userId: userId, surveyId: survey.id!, questionId: question1.id!, answerId: answer1.id!)
 
         // When
-        try app.test(.POST, "api/v1/submit/", headers: headers, content: firstInput) { res in
+        try app.test(.POST, "api/v1/submit/", headers: headers, content: firstInput, afterResponse: { res in
             // Then
             let result = try res.content.decode(SubmittedAnswerDatabaseModel.Output.self)
             XCTAssertEqual(result.userId, userId)
             XCTAssertEqual(result.answerId, answer1.id)
             XCTAssertEqual(result.questionId, question1.id)
             XCTAssertEqual(result.surveyId, survey.id)
-        }
+        })
 
         // Given
         let secondInput = SubmitAnswerRequest(userId: userId, surveyId: survey.id!, questionId: question2.id!, answerId: answer2.id!)
 
         // When
-        try app.test(.POST, "api/v1/submit/", headers: headers, content: secondInput) { res in
+        try app.test(.POST, "api/v1/submit/", headers: headers, content: secondInput, afterResponse: { res in
             // Then
             let result = try res.content.decode(SubmittedAnswerDatabaseModel.Output.self)
             XCTAssertEqual(result.userId, userId)
             XCTAssertEqual(result.answerId, answer2.id)
             XCTAssertEqual(result.questionId, question2.id)
             XCTAssertEqual(result.surveyId, survey.id)
-        }
+        })
 
         // Then
         let _ = SubmittedAnswerDatabaseModel.query(on: app.db)
@@ -179,28 +179,28 @@ final class SubmitAnswerControllerIntegrationTests: XCTestCase {
         let firstInput = SubmitAnswerRequest(userId: firstUser, surveyId: survey.id!, questionId: question.id!, answerId: answer.id!)
 
         // When
-        try app.test(.POST, "api/v1/submit/", headers: headers, content: firstInput) { res in
+        try app.test(.POST, "api/v1/submit/", headers: headers, content: firstInput, afterResponse: { res in
             // Then
             let result = try res.content.decode(SubmittedAnswerDatabaseModel.Output.self)
             XCTAssertEqual(result.userId, firstUser)
             XCTAssertEqual(result.answerId, answer.id)
             XCTAssertEqual(result.questionId, question.id)
             XCTAssertEqual(result.surveyId, survey.id)
-        }
+        })
 
         // Given
         let secondUser = "789"
         let secondInput = SubmitAnswerRequest(userId: secondUser, surveyId: survey.id!, questionId: question.id!, answerId: answer.id!)
 
         // When
-        try app.test(.POST, "api/v1/submit/", headers: headers, content: secondInput) { res in
+        try app.test(.POST, "api/v1/submit/", headers: headers, content: secondInput, afterResponse: { res in
             // Then
             let result = try res.content.decode(SubmittedAnswerDatabaseModel.Output.self)
             XCTAssertEqual(result.userId, secondUser)
             XCTAssertEqual(result.answerId, answer.id)
             XCTAssertEqual(result.questionId, question.id)
             XCTAssertEqual(result.surveyId, survey.id)
-        }
+        })
 
         // Then
         let _ = SubmittedAnswerDatabaseModel.query(on: app.db)
@@ -229,7 +229,7 @@ final class SubmitAnswerControllerIntegrationTests: XCTestCase {
     }
 
     func createAnswerModel(title: String, questionId: UUID?) -> AnswerDatabaseModel {
-        guard let questionId = questionId else { fatalError("AnswerId should actually not be optional") }
+        guard let questionId = questionId else { fatalError("QuestionId should actually not be optional") }
 
         let model = AnswerDatabaseModel(title: title, questionId: questionId)
         try? model.save(on: app.db).wait()

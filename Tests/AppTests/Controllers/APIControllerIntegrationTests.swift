@@ -33,11 +33,11 @@ final class APIControllerIntegrationTests: XCTestCase {
         let model = createDatabaseModel(title: "title")
 
         // When
-        try app.test(.GET, "/", headers: headers) { res in
+        try app.test(.GET, "/", headers: headers, afterResponse: { res in
             // Then
             let result = try res.content.decode(Page<DatabaseModel.Output>.self)
             XCTAssertEqual(result.items, [model.output])
-        }
+        })
     }
 
     func test_all_whenUnauthorizedToken_shouldReturnUnauthorized() throws {
@@ -45,10 +45,10 @@ final class APIControllerIntegrationTests: XCTestCase {
         let headers = HTTPHeaders.createConsumerToken()
 
         // When
-        try app.test(.GET, "/", headers: headers) { res in
+        try app.test(.GET, "/", headers: headers, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .unauthorized)
-        }
+        })
     }
 
     // MARK: - Get
@@ -61,11 +61,11 @@ final class APIControllerIntegrationTests: XCTestCase {
         let identifier = model.id?.uuidString ?? ""
 
         // When
-        try app.test(.GET, "/\(identifier)", headers: headers) { res in
+        try app.test(.GET, "/\(identifier)", headers: headers, afterResponse: { res in
             // Then
             let result = try res.content.decode(DatabaseModel.Output.self)
             XCTAssertEqual(result, model.output)
-        }
+        })
     }
 
     func test_get_whenConsumerToken_shouldReturnUnauthorized() throws {
@@ -76,10 +76,10 @@ final class APIControllerIntegrationTests: XCTestCase {
         let identifier = model.id?.uuidString ?? ""
 
         // When
-        try app.test(.GET, "/\(identifier)", headers: headers) { res in
+        try app.test(.GET, "/\(identifier)", headers: headers, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .unauthorized)
-        }
+        })
     }
 
     // MARK: - Create
@@ -90,11 +90,11 @@ final class APIControllerIntegrationTests: XCTestCase {
         let input = DatabaseModel.Input(title: "input")
 
         // When
-        try app.test(.POST, "/", headers: headers, content: input) { res in
+        try app.test(.POST, "/", headers: headers, content: input, afterResponse: { res in
             // Then
             let result = try res.content.decode(DatabaseModel.Output.self)
             XCTAssertEqual(result.title, "input")
-        }
+        })
     }
 
     func test_create_whenUnauthorizedToken_shouldReturnUnauthorized() throws {
@@ -103,10 +103,10 @@ final class APIControllerIntegrationTests: XCTestCase {
         let input = DatabaseModel.Input(title: "input")
 
         // When
-        try app.test(.POST, "/", headers: headers, content: input) { res in
+        try app.test(.POST, "/", headers: headers, content: input, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .unauthorized)
-        }
+        })
     }
 
     // MARK: - Update
@@ -121,12 +121,12 @@ final class APIControllerIntegrationTests: XCTestCase {
         let input = DatabaseModel.Input(title: "Update title")
 
         // When
-        try app.test(.POST, "/\(identifier)", headers: headers, content: input) { res in
+        try app.test(.POST, "/\(identifier)", headers: headers, content: input, afterResponse: { res in
             // Then
             let result = try res.content.decode(DatabaseModel.Output.self)
             XCTAssertNotEqual(result, model.output)
             XCTAssertEqual(result.title, "Update title")
-        }
+        })
     }
 
     func test_update_whenUnauthorizedToken_shouldReturnUnauthorized() throws {
@@ -139,10 +139,10 @@ final class APIControllerIntegrationTests: XCTestCase {
         let input = DatabaseModel.Input(title: "Update title")
 
         // When
-        try app.test(.POST, "/\(identifier)", headers: headers, content: input) { res in
+        try app.test(.POST, "/\(identifier)", headers: headers, content: input, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .unauthorized)
-        }
+        })
     }
 
     // MARK: - Delete
@@ -155,13 +155,13 @@ final class APIControllerIntegrationTests: XCTestCase {
         let identifier = model.id?.uuidString ?? ""
 
         // When
-        try app.test(.DELETE, "/\(identifier)", headers: headers) { res in
+        try app.test(.DELETE, "/\(identifier)", headers: headers, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .ok)
             DatabaseModel.query(on: app.db).count().whenSuccess { count in
                 XCTAssertEqual(count, 0)
             }
-        }
+        })
     }
 
     func test_delete_whenUnauthorizedToken_shouldNotDeleteModel() throws {
@@ -172,13 +172,13 @@ final class APIControllerIntegrationTests: XCTestCase {
         let identifier = model.id?.uuidString ?? ""
 
         // When
-        try app.test(.DELETE, "/\(identifier)", headers: headers) { res in
+        try app.test(.DELETE, "/\(identifier)", headers: headers, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .unauthorized)
             DatabaseModel.query(on: app.db).count().whenSuccess { count in
                 XCTAssertEqual(count, 1)
             }
-        }
+        })
     }
 
     // MARK: - Helpers

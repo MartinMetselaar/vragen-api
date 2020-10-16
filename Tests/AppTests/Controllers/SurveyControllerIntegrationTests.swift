@@ -28,11 +28,11 @@ final class SurveyControllerIntegrationTests: XCTestCase {
         let identifier = model.id?.uuidString ?? ""
 
         // When
-        try app.test(.GET, "api/v1/surveys/\(identifier)", headers: headers) { res in
+        try app.test(.GET, "api/v1/surveys/\(identifier)", headers: headers, afterResponse: { res in
             // Then
             let result = try res.content.decode(SurveyDatabaseModel.Output.self)
             XCTAssertEqual(result, model.output)
-        }
+        })
     }
 
     func test_get_whenConsumerToken_shouldReturnUnauthorized() throws {
@@ -43,10 +43,10 @@ final class SurveyControllerIntegrationTests: XCTestCase {
         let identifier = model.id?.uuidString ?? ""
 
         // When
-        try app.test(.GET, "api/v1/surveys/\(identifier)", headers: headers) { res in
+        try app.test(.GET, "api/v1/surveys/\(identifier)", headers: headers, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .unauthorized)
-        }
+        })
     }
 
     // MARK: - Get including questions and answers
@@ -61,7 +61,7 @@ final class SurveyControllerIntegrationTests: XCTestCase {
         let identifier = model.id?.uuidString ?? ""
 
         // When
-        try app.test(.GET, "api/v1/surveys/\(identifier)/children", headers: headers) { res in
+        try app.test(.GET, "api/v1/surveys/\(identifier)/children", headers: headers, afterResponse: { res in
             // Then
             let result = try res.content.decode(SurveyWithQuestionsResponse.self)
             XCTAssertNotNil(result)
@@ -69,7 +69,7 @@ final class SurveyControllerIntegrationTests: XCTestCase {
             XCTAssertEqual(result.title, model.title)
 
             XCTAssertEqual(result.questions.count, 2)
-        }
+        })
     }
 
     // MARK: - All
@@ -80,13 +80,13 @@ final class SurveyControllerIntegrationTests: XCTestCase {
         let survey = createSurveyModel(title: "survey")
 
         // When
-        try app.test(.GET, "api/v1/surveys/", headers: headers) { res in
+        try app.test(.GET, "api/v1/surveys/", headers: headers, afterResponse: { res in
             // Then
             let result = try res.content.decode(VragenAPIModels.Page<SurveyDatabaseModel.Output>.self)
             XCTAssertNotNil(result.items.first)
             XCTAssertEqual(result.items.first?.id, survey.id)
             XCTAssertEqual(result.items.first?.title, survey.title)
-        }
+        })
     }
 
     func test_all_whenConsumerToken_shouldReturnUnauthorized() throws {
@@ -95,10 +95,10 @@ final class SurveyControllerIntegrationTests: XCTestCase {
         let _ = createSurveyModel(title: "survey")
 
         // When
-        try app.test(.GET, "api/v1/surveys/", headers: headers) { res in
+        try app.test(.GET, "api/v1/surveys/", headers: headers, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .unauthorized)
-        }
+        })
     }
 
     // MARK: - Create
@@ -109,11 +109,11 @@ final class SurveyControllerIntegrationTests: XCTestCase {
         let input = SurveyDatabaseModel.Input(title: "input")
 
         // When
-        try app.test(.POST, "/api/v1/surveys/", headers: headers, content: input) { res in
+        try app.test(.POST, "/api/v1/surveys/", headers: headers, content: input, afterResponse: { res in
             // Then
             let result = try res.content.decode(SurveyDatabaseModel.Output.self)
             XCTAssertEqual(result.title, "input")
-        }
+        })
     }
 
     func test_create_whenUnauthorizedToken_shouldReturnUnauthorized() throws {
@@ -122,10 +122,10 @@ final class SurveyControllerIntegrationTests: XCTestCase {
         let input = SurveyDatabaseModel.Input(title: "input")
 
         // When
-        try app.test(.POST, "/api/v1/surveys/", headers: headers, content: input) { res in
+        try app.test(.POST, "/api/v1/surveys/", headers: headers, content: input, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .unauthorized)
-        }
+        })
     }
 
     // MARK: - Helpers

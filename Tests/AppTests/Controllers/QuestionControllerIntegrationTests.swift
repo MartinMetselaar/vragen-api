@@ -30,11 +30,11 @@ final class QuestionControllerIntegrationTests: XCTestCase {
         let questionId = question.id?.uuidString ?? ""
 
         // When
-        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/\(questionId)", headers: headers) { res in
+        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/\(questionId)", headers: headers, afterResponse: { res in
             // Then
             let result = try res.content.decode(QuestionDatabaseModel.Output.self)
             XCTAssertEqual(result, question.output)
-        }
+        })
     }
 
     func test_get_whenConsumerToken_shouldReturnUnauthorized() throws {
@@ -47,10 +47,10 @@ final class QuestionControllerIntegrationTests: XCTestCase {
         let questionId = question.id?.uuidString ?? ""
 
         // When
-        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/\(questionId)", headers: headers) { res in
+        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/\(questionId)", headers: headers, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .unauthorized)
-        }
+        })
     }
 
     // MARK: - All
@@ -64,11 +64,11 @@ final class QuestionControllerIntegrationTests: XCTestCase {
         let surveyId = survey.id?.uuidString ?? ""
 
         // When
-        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/", headers: headers) { res in
+        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/", headers: headers, afterResponse: { res in
             // Then
             let result = try res.content.decode(VragenAPIModels.Page<QuestionDatabaseModel.Output>.self)
             XCTAssertEqual(result.items, [question.output])
-        }
+        })
     }
 
     func test_all_whenConsumerToken_shouldReturnUnauthorized() throws {
@@ -80,10 +80,10 @@ final class QuestionControllerIntegrationTests: XCTestCase {
         let surveyId = survey.id?.uuidString ?? ""
 
         // When
-        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/", headers: headers) { res in
+        try app.test(.GET, "api/v1/surveys/\(surveyId)/questions/", headers: headers, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .unauthorized)
-        }
+        })
     }
 
     // MARK: - Create
@@ -97,11 +97,11 @@ final class QuestionControllerIntegrationTests: XCTestCase {
         let surveyId = survey.id?.uuidString ?? ""
 
         // When
-        try app.test(.POST, "api/v1/surveys/\(surveyId)/questions/", headers: headers, content: input) { res in
+        try app.test(.POST, "api/v1/surveys/\(surveyId)/questions/", headers: headers, content: input, afterResponse: { res in
             // Then
             let result = try res.content.decode(QuestionDatabaseModel.Output.self)
             XCTAssertEqual(result.title, "question")
-        }
+        })
     }
 
     func test_create_whenUnauthorizedToken_shouldReturnUnauthorized() throws {
@@ -112,10 +112,10 @@ final class QuestionControllerIntegrationTests: XCTestCase {
         let surveyId = survey.id?.uuidString ?? ""
 
         // When
-        try app.test(.POST, "api/v1/surveys/\(surveyId)/questions/", headers: headers, content: input) { res in
+        try app.test(.POST, "api/v1/surveys/\(surveyId)/questions/", headers: headers, content: input, afterResponse: { res in
             // Then
             XCTAssertEqual(res.status, .unauthorized)
-        }
+        })
     }
 
     // MARK: - Helpers
