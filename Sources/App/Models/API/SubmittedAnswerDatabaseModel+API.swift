@@ -9,6 +9,10 @@ extension SubmittedAnswerDatabaseModel: APIModel {
         SubmitAnswerResponse(userId: userId, surveyId: surveyId, questionId: questionId, answerId: answerId)
     }
 
+    var outputResult: SurveyResultsResponse? {
+        return SurveyResultsResponse(userId: userId, question: question.title, answer: answer.title)
+    }
+
     convenience init(input: Input) throws {
         self.init()
         self.userId = input.userId
@@ -26,3 +30,4 @@ extension SubmittedAnswerDatabaseModel: APIModel {
 }
 
 extension SubmitAnswerResponse: Content {}
+extension SurveyResultsResponse: Content {}

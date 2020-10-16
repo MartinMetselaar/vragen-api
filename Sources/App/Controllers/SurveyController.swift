@@ -1,6 +1,7 @@
 import Vapor
 import Fluent
 import VragenAPIModels
+import CodableCSV
 
 struct SurveyController: APIController {
 
@@ -21,6 +22,30 @@ struct SurveyController: APIController {
             .unwrap(or: Abort(.notFound))
             .map { $0.outputWithQuestions }
             .unwrap(or: Abort(.internalServerError))
+    }
+
+    func results(req: Request) throws -> EventLoopFuture<Response> {
+        guard let surveyId = req.parameters.get("surveyId", as: UUID.self) else {
+            throw Abort(.unprocessableEntity)
+        }
+
+        let encoder = CSVEncoder() {
+            $0.headers = ["userId", "question", "answer"]
+        }
+
+        return SubmittedAnswerDatabaseModel.query(on: req.db)
+            .filter(\.$surveyId == surveyId)
+            .with(\.$answer)
+            .with(\.$question)
+            .all()
+            .mapEachCompact { $0.outputResult }
+            .flatMapThrowing { try encoder.encode($0, into: String.self) }
+            .map {
+                let headers = HTTPHeaders([
+                    (HTTPHeaders.Name.contentType.description, "text/csv"),
+                ])
+                return Response(status: .ok, headers: headers, body: .init(string: $0))
+            }
     }
 
     func find(req: Request) throws -> EventLoopFuture<SurveyDatabaseModel> {
@@ -54,6 +79,11 @@ struct SurveyController: APIController {
         routes.grouped(ConsumerAuthenticator()).grouped(AdminAuthenticator())
             .grouped(AuthorizedUser.guardMiddleware())
             .get(idPathComponent, "children", use: self.getIncludingQuestionsAndAnswers)
+
+        // Download
+        routes.grouped(AdminAuthenticator())
+            .grouped(AuthorizedUser.guardMiddleware())
+            .get(idPathComponent, "results", use: self.results)
 
         // Update
         routes

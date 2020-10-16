@@ -17,8 +17,13 @@ final class SubmittedAnswerDatabaseModel: Model {
     @ID() var id: UUID?
 
     @Field(key: FieldKeys.userId) var userId: String
+
+    @Parent(key: FieldKeys.answerId) var answer: AnswerDatabaseModel
     @Field(key: FieldKeys.answerId) var answerId: AnswerDatabaseModel.IDValue
+
+    @Parent(key: FieldKeys.questionId) var question: QuestionDatabaseModel
     @Field(key: FieldKeys.questionId) var questionId: QuestionDatabaseModel.IDValue
+    
     @Field(key: FieldKeys.surveyId) var surveyId: SurveyDatabaseModel.IDValue
 
     @Timestamp(key: FieldKeys.createdAt, on: .create) var createdAt: Date?

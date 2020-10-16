@@ -17,13 +17,16 @@ let package = Package(
         .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.1.0"),
         .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.1"),
 
-        .package(url: "https://github.com/MartinMetselaar/vragen-api-models.git", from: "1.4.0"),
+        .package(url: "https://github.com/dehesa/CodableCSV.git", from: "0.6.3"),
+        
+        .package(url: "https://github.com/MartinMetselaar/vragen-api-models.git", from: "1.5.0"),
     ],
     targets: [
         .target(name: "App", dependencies: [
             .product(name: "Vapor", package: "vapor"),
             .product(name: "Fluent", package: "fluent"),
             .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
+            .product(name: "CodableCSV", package: "CodableCSV"),
 
             .product(name: "VragenAPIModels", package: "vragen-api-models"),
         ]),
